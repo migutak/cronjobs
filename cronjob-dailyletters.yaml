@@ -1,0 +1,27 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-dailyletters
+spec:
+  schedule: "*/1 * * * *"
+  startingDeadlineSeconds: 20
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      completions: 2
+      template:
+        spec:
+          containers:
+          - name: cronjob-dailyletters
+            image: migutak/crondailyletters:5.0
+            command: ["/bin/sh","-c","sqlplus ecol/ecol@159.122.130.149:1564/ORCLCDB.localdomain @test.sql"]
+            volumeMounts:
+            - name: configmap
+              mountPath: /usr/workdir
+          restartPolicy: Never
+          volumes:
+            - name: configmap
+              configMap:
+                name: dailyletters-source
