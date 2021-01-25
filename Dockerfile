@@ -5,7 +5,7 @@ RUN  yum -y install oracle-release-el7 oracle-nodejs-release-el7 && \
      yum -y install oracle-instantclient19.3-basiclite nodejs && \
      rm -rf /var/cache/yum
 
-RUN MKDIR -p /app/scripts
+RUN mkdir -p /app/scripts
 WORKDIR /app
 ADD package.json /app/
 ADD . .

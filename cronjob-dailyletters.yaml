@@ -16,10 +16,69 @@ spec:
           containers:
           - name: cronjob-dailyletters
             image: migutak/crondailyletters:5.0
-            command: ["/bin/sh","-c","sqlplus ecol/ecol@159.122.130.149:1564/ORCLCDB.localdomain @test.sql"]
+            command: ["/bin/sh","-c","node /app/scripts/demands.js"]
+            env:
+            - name: DB_CONNECTIONSTRING
+              valueFrom:
+                configMapKeyRef:
+                  name: ecolconfigmap
+                  key: CONNECTIONSTRING
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ecolsecret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecolsecret
+                  key: dbpassword
             volumeMounts:
             - name: configmap
-              mountPath: /usr/workdir
+              mountPath: /app/scripts
+          restartPolicy: Never
+          volumes:
+            - name: configmap
+              configMap:
+                name: dailyletters-source
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-dailyletterscc
+spec:
+  schedule: "*/1 * * * *"
+  startingDeadlineSeconds: 20
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      completions: 2
+      template:
+        spec:
+          containers:
+          - name: cronjob-dailyletterscc
+            image: migutak/crondailyletters:5.0
+            command: ["/bin/sh","-c","node /app/scripts/demandscc.js"]
+            env:
+            - name: DB_CONNECTIONSTRING
+              valueFrom:
+                configMapKeyRef:
+                  name: ecolconfigmap
+                  key: CONNECTIONSTRING
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ecolsecret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecolsecret
+                  key: dbpassword
+            volumeMounts:
+            - name: configmap
+              mountPath: /app/scripts
           restartPolicy: Never
           volumes:
             - name: configmap
