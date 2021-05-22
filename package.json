@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "node-cron": "^2.0.3",
-    "oracledb": "^5.0.0"
+    "oracledb": "^5.1.0"
   }
 }
