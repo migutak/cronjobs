@@ -12,7 +12,7 @@ function currentDate() {
   return [year, month, day].join('-')
 };
 currentDate();
-// var task = cron.schedule('0 7 * * 1-6', () => {
+var task = cron.schedule('0 7 * * 1-6', () => {
   // update self cure
  (async function() {
         try {
@@ -23,7 +23,7 @@ currentDate();
           });
           
           cureresult = await connection.execute("update demandsdue set status = 'self cure' where status = 'pending' and accnumber not in (select accnumber from loans_stage)");
-          console.log('-> self cure update :' + new Date());      
+          console.log('self cure update done ___ on ' + new Date());      
           result = await connection.execute("select * from autoletters where active = 'true'");
           for (i=0; i<result.rows.length; i++) {
               const memogrp = result.rows[i].MEMOGROUP;
@@ -32,7 +32,7 @@ currentDate();
               
               const sqlInsert = "select accnumber,custnumber,nvl(client_name,0) client_name, section, oustbalance, instamount totalarrears, daysinarr, nvl(addressline1,0) address, postcode postalcode, telnumber, emailaddress, colofficer, branchcode, rrocode, arocode, '"+letterid+"' demand from tqall where substr(accnumber,3,3) = '" + memogrp + "' and daysinarr = " + daysinarr;
               selectResult = await connection.execute(sqlInsert);
-                //console.log('-> total_letters are ' + i);
+                //console.log(currentDate() + '_total_letters_is_' + i, selectResult.rows);
                 for (x=0; x<selectResult.rows.length; x++) {
                   // console.log('insert starts ....');
                   var insertSQL = "insert into demandsdue(accnumber, custnumber, client_name, section, oustbalance, totalarrears, daysinarr, address, postalcode, telnumber, emailaddress, datedue, colofficer, branchcode, rrocode, arocode, demandletter, status) "+ 
@@ -42,23 +42,29 @@ currentDate();
                   //console.log('insert end ....' + x);
                 };
           };
-          console.log('Demandsdue insert completed on :' + new Date());
-          console.log('----End----');
+          console.log('demandsdue insert complete ___ on ' + new Date());
         } catch (err) {
           console.error(err);
-          console.log('----End----');
         } finally {
           if (connection) {
             try {
-              await connection.close();   // Always close connections
+              //await connection.close();   // Always close connections
+              await doRelease(connection)
             } catch (err) {
               console.error(err.message);
-              console.log('----End----');
             }
           }
         }
       })();
-// });
 
-console.log('[' + dbConfig.servicename + '] cronjob service started at '  + new Date());
+    function doRelease(connection) {
+        connection.close(
+            function (err) {
+                if (err)
+                    console.error(err.message);
+            });
+    }
+});
+
+console.log('dailynotes running ....');
 

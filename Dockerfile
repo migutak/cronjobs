@@ -11,7 +11,7 @@ ADD package.json /app/
 ADD . .
 RUN npm install
 
-CMD ["node", "--version"]
+CMD ["node", "."]
 # docker build -t migutak/crondailyletters:5.0 .
 # docker run --rm --name cronjobs -e DB_USER=ecol -e DB_PASSWORD=ecol -e DB_CONNECTIONSTRING=158.176.74.125:1564/ORCLCDB.localdomain  migutak/crondailyletters:5.0 node index_manual.js > /tmp/output.log
 # docker run -v /tmp:/tmp --name test -d busybox sh -c "while true; do date > /tmp/output.log; sleep 1; done"

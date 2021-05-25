@@ -6,7 +6,7 @@ var dbConfig = require('./dbconfig.js');
 var fs = require('fs');
 
 // runs dailly 5 am
-var task = cron.schedule('0 5 * * *', () => {
+//var task = cron.schedule('0 5 * * *', () => {
 
     (async function () {
         try {
@@ -35,4 +35,4 @@ var task = cron.schedule('0 5 * * *', () => {
             }
         }
     })();
-});
+//});

@@ -12,7 +12,7 @@ function currentDate() {
   return [year, month, day].join('-')
 };
 currentDate(); // 0 6 * * *
-var task = cron.schedule('0 6 * * *', () => {
+//var task = cron.schedule('0 6 * * *', () => {
     (async function() {
         try {
           connection = await oracledb.getConnection({
@@ -54,11 +54,5 @@ var task = cron.schedule('0 6 * * *', () => {
         }
       })();
 
-    function doRelease(connection) {
-        connection.close(
-            function (err) {
-                if (err)
-                    console.error(err.message);
-            });
-    }
-});
+//});
+console.log('[' + dbConfig.servicename + '] cronjob service started at '  + new Date());
