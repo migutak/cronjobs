@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.8.0",
+    "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "node-cron": "^2.0.3",
     "oracledb": "^5.1.0"
